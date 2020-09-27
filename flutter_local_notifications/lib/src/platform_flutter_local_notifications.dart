@@ -75,8 +75,8 @@ class AndroidFlutterLocalNotificationsPlugin
   Future<void> schedule(int id, String title, String body,
       DateTime scheduledDate, AndroidNotificationDetails notificationDetails,
       {String payload,
-      bool androidAllowWhileIdle = false,
-      bool androidWakeScreen = false}) async {
+      bool androidAllowWhileIdle = true,
+      bool androidWakeScreen = true}) async {
     validateId(id);
     var serializedPlatformSpecifics =
         notificationDetails?.toMap() ?? Map<String, dynamic>();
@@ -135,8 +135,15 @@ class AndroidFlutterLocalNotificationsPlugin
 
   @override
   Future<void> show(int id, String title, String body,
-      {AndroidNotificationDetails notificationDetails, String payload}) {
+      {AndroidNotificationDetails notificationDetails,
+      String payload,
+      bool androidAllowWhileIdle = true,
+      bool androidWakeScreen = true}) {
     validateId(id);
+    var serializedPlatformSpecifics =
+        notificationDetails?.toMap() ?? Map<String, dynamic>();
+    serializedPlatformSpecifics['allowWhileIdle'] = androidAllowWhileIdle;
+    serializedPlatformSpecifics['wakeScreen'] = androidWakeScreen;
     return _channel.invokeMethod(
       'show',
       <String, dynamic>{
@@ -144,7 +151,7 @@ class AndroidFlutterLocalNotificationsPlugin
         'title': title,
         'body': body,
         'payload': payload ?? '',
-        'platformSpecifics': notificationDetails?.toMap(),
+        'platformSpecifics': serializedPlatformSpecifics,
       },
     );
   }

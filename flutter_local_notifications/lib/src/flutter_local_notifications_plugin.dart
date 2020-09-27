@@ -129,13 +129,17 @@ class FlutterLocalNotificationsPlugin {
   /// Show a notification with an optional payload that will be passed back to the app when a notification is tapped.
   Future<void> show(int id, String title, String body,
       NotificationDetails notificationDetails,
-      {String payload}) async {
+      {String payload,
+      bool androidAllowWhileIdle = true,
+      bool androidWakeScreen = true}) async {
     if (_platform.isAndroid) {
       await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
           ?.show(id, title, body,
               notificationDetails: notificationDetails?.android,
-              payload: payload);
+              payload: payload,
+              androidAllowWhileIdle: androidAllowWhileIdle,
+              androidWakeScreen: androidWakeScreen);
     } else if (_platform.isIOS) {
       await resolvePlatformSpecificImplementation<
               IOSFlutterLocalNotificationsPlugin>()
@@ -167,8 +171,8 @@ class FlutterLocalNotificationsPlugin {
   Future<void> schedule(int id, String title, String body,
       DateTime scheduledDate, NotificationDetails notificationDetails,
       {String payload,
-      bool androidAllowWhileIdle = false,
-      bool androidWakeScreen = false}) async {
+      bool androidAllowWhileIdle = true,
+      bool androidWakeScreen = true}) async {
     if (_platform.isAndroid) {
       await resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>()
